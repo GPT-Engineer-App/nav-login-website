@@ -1,10 +1,10 @@
-// Update this page (the content is just a fallback if you fail to update the page)
-
 const Index = () => {
   return (
-    <div className="text-center">
-      <h1 className="text-3xl">Your Blank Canvas</h1>
-      <p>Chat with the agent to start making edits.</p>
+    <div className="container mx-auto px-4 py-8">
+      <h1 className="text-4xl font-bold mb-4">Welcome to Acme Inc</h1>
+      <p className="text-xl">
+        We're a cutting-edge technology company dedicated to innovation and excellence.
+      </p>
     </div>
   );
 };

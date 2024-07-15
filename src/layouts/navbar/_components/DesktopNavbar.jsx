@@ -1,19 +1,35 @@
 import { Package2 } from "lucide-react";
 import { NavItem } from "./NavItem";
+import { Button } from "@/components/ui/button";
+import { UserMenu } from "./UserMenu";
 
-export const DesktopNavbar = ({ navItems }) => (
-  <nav className="hidden md:flex md:items-center md:gap-5 lg:gap-6 text-lg font-medium md:text-sm">
+export const DesktopNavbar = ({ isLoggedIn, toggleLogin }) => (
+  <nav className="hidden md:flex md:items-center md:gap-5 lg:gap-6 text-lg font-medium md:text-sm w-full">
     <NavItem
       to="/"
       className="flex items-center gap-2 text-lg font-semibold md:text-base"
     >
       <Package2 className="h-6 w-6" />
-      <span className="sr-only">Acme Inc</span>
+      <span>Acme Inc</span>
     </NavItem>
-    {navItems.map((item) => (
-      <NavItem key={item.to} to={item.to}>
-        {item.title}
-      </NavItem>
-    ))}
+    <div className="flex-grow flex justify-center space-x-4">
+      <NavItem to="/">Home</NavItem>
+      <NavItem to="/about">About</NavItem>
+      <NavItem to="/contact">Contact</NavItem>
+    </div>
+    <div className="flex items-center space-x-2">
+      {isLoggedIn ? (
+        <UserMenu toggleLogin={toggleLogin} />
+      ) : (
+        <>
+          <NavItem to="/login">
+            <Button variant="ghost">Login</Button>
+          </NavItem>
+          <NavItem to="/register">
+            <Button>Register</Button>
+          </NavItem>
+        </>
+      )}
+    </div>
   </nav>
 );
