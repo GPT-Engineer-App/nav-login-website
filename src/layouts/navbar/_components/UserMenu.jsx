@@ -10,7 +10,7 @@ import {
 import { CircleUser } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
-export const UserMenu = ({ toggleLogin }) => (
+export const UserMenu = ({ logout }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <Button variant="secondary" size="icon" className="rounded-full">
@@ -31,7 +31,7 @@ export const UserMenu = ({ toggleLogin }) => (
         <NavLink to="/support">Support</NavLink>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
-      <DropdownMenuItem onClick={toggleLogin}>Logout</DropdownMenuItem>
+      <DropdownMenuItem onClick={logout}>Logout</DropdownMenuItem>
     </DropdownMenuContent>
   </DropdownMenu>
 );

@@ -9,12 +9,10 @@ const SupabaseAuthContext = createContext();
 export const SupabaseAuthProvider = ({ children }) => {
   return (
     <SupabaseProvider>
-      <SupabaseAuthProviderInner>
-        {children}
-      </SupabaseAuthProviderInner>
+      <SupabaseAuthProviderInner>{children}</SupabaseAuthProviderInner>
     </SupabaseProvider>
   );
-}
+};
 
 export const SupabaseAuthProviderInner = ({ children }) => {
   const [session, setSession] = useState(null);
@@ -42,15 +40,23 @@ export const SupabaseAuthProviderInner = ({ children }) => {
     };
   }, [queryClient]);
 
+  const login = async (email, password) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
+  };
+
   const logout = async () => {
     await supabase.auth.signOut();
     setSession(null);
     queryClient.invalidateQueries('user');
-    setLoading(false);
   };
 
   return (
-    <SupabaseAuthContext.Provider value={{ session, loading, logout }}>
+    <SupabaseAuthContext.Provider value={{ session, loading, login, logout }}>
       {children}
     </SupabaseAuthContext.Provider>
   );
