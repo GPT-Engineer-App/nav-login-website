@@ -19,7 +19,9 @@ const Login = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      await login(identifier, password);
+      const { user, error } = await login(identifier, password);
+      if (error) throw error;
+      
       toast({
         title: "Login Successful",
         description: "You have been logged in successfully.",
@@ -29,7 +31,7 @@ const Login = () => {
     } catch (error) {
       toast({
         title: "Login Failed",
-        description: error.message,
+        description: error.message || "An error occurred during login.",
         variant: "destructive",
       });
     } finally {
