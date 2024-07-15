@@ -28,6 +28,14 @@ const fromSupabase = async (query) => {
 | created_at | timestamptz | string | true     |
 | date       | date        | string | true     |
 
+### Users
+
+| name       | type        | format | required |
+|------------|-------------|--------|----------|
+| id         | uuid        | string | true     |
+| created_at | timestamptz | string | true     |
+| username   | text        | string | true     |
+
 */
 
 // Hooks for event model
@@ -68,6 +76,48 @@ export const useDeleteEvent = () => {
         mutationFn: (id) => fromSupabase(supabase.from('event').delete().eq('id', id)),
         onSuccess: () => {
             queryClient.invalidateQueries('events');
+        },
+    });
+};
+
+// Hooks for Users model
+
+export const useUsers = () => useQuery({
+    queryKey: ['users'],
+    queryFn: () => fromSupabase(supabase.from('Users').select('*'))
+});
+
+export const useUser = (id) => useQuery({
+    queryKey: ['users', id],
+    queryFn: () => fromSupabase(supabase.from('Users').select('*').eq('id', id).single())
+});
+
+export const useAddUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (newUser) => fromSupabase(supabase.from('Users').insert([newUser])),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
+        },
+    });
+};
+
+export const useUpdateUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({ id, ...updateData }) => fromSupabase(supabase.from('Users').update(updateData).eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
+        },
+    });
+};
+
+export const useDeleteUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (id) => fromSupabase(supabase.from('Users').delete().eq('id', id)),
+        onSuccess: () => {
+            queryClient.invalidateQueries('users');
         },
     });
 };

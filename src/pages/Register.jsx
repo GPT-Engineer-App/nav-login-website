@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,10 +12,11 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const checkUsername = async (username) => {
     const { data, error } = await supabase
-      .from('profiles')
+      .from('Users')
       .select('username')
       .eq('username', username)
       .single();
@@ -49,13 +51,33 @@ const Register = () => {
       return;
     }
 
-    // Here you would typically handle the registration process
-    console.log("Registration data:", { username, email, password });
-    
-    toast({
-      title: "Registration Successful",
-      description: "Your account has been created",
-    });
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            username,
+          },
+        },
+      });
+
+      if (error) throw error;
+
+      await supabase.from('Users').insert({ id: data.user.id, username });
+
+      toast({
+        title: "Registration Successful",
+        description: "Your account has been created. Please check your email for verification.",
+      });
+      navigate("/login");
+    } catch (error) {
+      toast({
+        title: "Registration Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   };
 
   return (
