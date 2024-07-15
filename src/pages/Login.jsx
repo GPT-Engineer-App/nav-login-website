@@ -5,21 +5,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { useSupabaseAuth } from "@/integrations/supabase/auth";
+import { Loader2 } from "lucide-react";
 
 const Login = () => {
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { login } = useSupabaseAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     try {
       await login(identifier, password);
       toast({
         title: "Login Successful",
         description: "You have been logged in successfully.",
+        variant: "success",
       });
       navigate("/");
     } catch (error) {
@@ -28,6 +32,8 @@ const Login = () => {
         description: error.message,
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -57,7 +63,16 @@ const Login = () => {
             required
           />
         </div>
-        <Button type="submit" className="w-full">Login</Button>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Logging in...
+            </>
+          ) : (
+            "Login"
+          )}
+        </Button>
       </form>
     </div>
   );
