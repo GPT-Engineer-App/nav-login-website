@@ -7,7 +7,6 @@ import { supabase } from "@/integrations/supabase";
 
 const Register = () => {
   const [username, setUsername] = useState("");
-  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -51,7 +50,7 @@ const Register = () => {
     }
 
     // Here you would typically handle the registration process
-    console.log("Registration data:", { username, name, email, password });
+    console.log("Registration data:", { username, email, password });
     
     toast({
       title: "Registration Successful",
@@ -71,17 +70,6 @@ const Register = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter your username"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            type="text"
-            id="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Enter your name"
             required
           />
         </div>
