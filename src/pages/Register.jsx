@@ -5,14 +5,57 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase";
+import { Loader2 } from "lucide-react";
 
 const Register = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+
+  const validateInput = () => {
+    if (!username || !email || !password || !confirmPassword) {
+      toast({
+        title: "Error",
+        description: "All fields are required",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (password !== confirmPassword) {
+      toast({
+        title: "Error",
+        description: "Passwords do not match",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    if (password.length < 6) {
+      toast({
+        title: "Error",
+        description: "Password must be at least 6 characters long",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({
+        title: "Error",
+        description: "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
+  };
 
   const checkUsername = async (username) => {
     const { data, error } = await supabase
@@ -31,27 +74,21 @@ const Register = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (password !== confirmPassword) {
-      toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    const usernameExists = await checkUsername(username);
-    if (usernameExists) {
-      toast({
-        title: "Username already exists",
-        description: "Please choose a different username",
-        variant: "destructive",
-      });
-      return;
-    }
+    if (!validateInput()) return;
+    setIsLoading(true);
 
     try {
+      const usernameExists = await checkUsername(username);
+      if (usernameExists) {
+        toast({
+          title: "Username already exists",
+          description: "Please choose a different username",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        return;
+      }
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -64,19 +101,26 @@ const Register = () => {
 
       if (error) throw error;
 
-      await supabase.from('Users').insert({ id: data.user.id, username });
+      if (data.user) {
+        await supabase.from('Users').insert({ id: data.user.id, username });
 
-      toast({
-        title: "Registration Successful",
-        description: "Your account has been created. Please check your email for verification.",
-      });
-      navigate("/login");
+        toast({
+          title: "Registration Successful",
+          description: "Your account has been created. Please check your email for verification.",
+        });
+        navigate("/login");
+      } else {
+        throw new Error("User registration failed");
+      }
     } catch (error) {
+      console.error('Registration error:', error);
       toast({
         title: "Registration Failed",
-        description: error.message,
+        description: error.message || "An error occurred during registration",
         variant: "destructive",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,8 +157,9 @@ const Register = () => {
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
+            placeholder="Enter your password (min 6 characters)"
             required
+            minLength={6}
           />
         </div>
         <div className="mb-4">
@@ -128,7 +173,16 @@ const Register = () => {
             required
           />
         </div>
-        <Button type="submit" className="w-full">Register</Button>
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Registering...
+            </>
+          ) : (
+            "Register"
+          )}
+        </Button>
       </form>
     </div>
   );
