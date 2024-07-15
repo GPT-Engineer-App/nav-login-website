@@ -7,15 +7,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { CircleUser } from "lucide-react";
+import { User } from "lucide-react";
 import { NavLink } from "react-router-dom";
 
 export const UserMenu = ({ logout }) => (
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
-      <Button variant="secondary" size="icon" className="rounded-full">
-        <CircleUser className="h-5 w-5" />
-        <span className="sr-only">Toggle user menu</span>
+      <Button variant="ghost" size="icon" className="rounded-full">
+        <User className="h-5 w-5" />
+        <span className="sr-only">Open user menu</span>
       </Button>
     </DropdownMenuTrigger>
     <DropdownMenuContent align="end">

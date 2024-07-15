@@ -7,7 +7,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useSupabaseAuth } from "@/integrations/supabase/auth";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const { login } = useSupabaseAuth();
   const { toast } = useToast();
@@ -16,7 +16,7 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await login(email, password);
+      await login(identifier, password);
       toast({
         title: "Login Successful",
         description: "You have been logged in successfully.",
@@ -36,13 +36,13 @@ const Login = () => {
       <h1 className="text-4xl font-bold mb-4">Login</h1>
       <form onSubmit={handleSubmit} className="max-w-md mx-auto">
         <div className="mb-4">
-          <Label htmlFor="email">Email</Label>
+          <Label htmlFor="identifier">Username or Email</Label>
           <Input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
+            type="text"
+            id="identifier"
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
+            placeholder="Enter your username or email"
             required
           />
         </div>

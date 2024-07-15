@@ -30,6 +30,8 @@ export const MobileSheet = () => {
           {session ? (
             <>
               <NavItem to="/profile">Profile</NavItem>
+              <NavItem to="/settings">Settings</NavItem>
+              <NavItem to="/support">Support</NavItem>
               <Button onClick={logout}>Logout</Button>
             </>
           ) : (
