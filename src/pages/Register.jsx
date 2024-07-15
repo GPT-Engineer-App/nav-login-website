@@ -102,7 +102,12 @@ const Register = () => {
       if (error) throw error;
 
       if (data.user) {
-        await supabase.from('Users').insert({ id: data.user.id, username });
+        const { error: insertError } = await supabase.from('Users').insert({ id: data.user.id, username });
+
+        if (insertError) {
+          console.error('Error inserting user data:', insertError);
+          throw new Error('Failed to insert user data');
+        }
 
         toast({
           title: "Registration Successful",
